@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import {config} from 'dotenv';
-import {env} from  'process'
+import {env} from  'process';
 import { router } from './src/routers/paletas.router.js';
 
 config()

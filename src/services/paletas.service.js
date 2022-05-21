@@ -131,7 +131,7 @@ export const deletePaletaService = (id) => {
 export const senhaPaletaService = (resposta) => {
   const senha = 'admin123';
   const verificador = resposta == senha;
-  return verificador ? true : false;
+  return verificador;
 };
 
 export const segurancaPaletaService=(seguranca)=>{
