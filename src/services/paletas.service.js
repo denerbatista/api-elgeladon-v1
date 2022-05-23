@@ -106,7 +106,7 @@ export const findPaletaByIdService = (id) => {
 };
 
 export const createPaletaService = (newPaleta) => {
-  const newId = paletas.length + 1;
+  const newId = paletas.length === 0 ? 1 : paletas[paletas.length - 1].id + 1;
   newPaleta.id = newId;
   paletas.push(newPaleta);
   return newPaleta;
