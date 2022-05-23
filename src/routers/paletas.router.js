@@ -5,9 +5,9 @@ import {
   updatePaletaController,
   deletePaletaController,
   senhaPaletaController,
-  segurancaPaletaController
+  segurancaPaletaController,
 } from '../controllers/paletas.controller.js';
-import {Router}  from 'express';
+import { Router } from 'express';
 
 export const router = Router();
 
@@ -17,4 +17,4 @@ router.post('/create/:token', createPaletaController);
 router.put('/update/:id,:token', updatePaletaController);
 router.delete('/delete/:id,:token', deletePaletaController);
 router.get('/seguranca/:senha,:token', senhaPaletaController);
-router.get('/segurancaverific/:token', segurancaPaletaController)
+router.get('/segurancaverific/:token', segurancaPaletaController);

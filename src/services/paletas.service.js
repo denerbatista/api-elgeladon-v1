@@ -144,6 +144,4 @@ export const segurancaPaletaService=(token,resposta,seguranca)=>{
   }else if(seguranca==false && token==resposta){
     return token
   }
-  
 } 
-

@@ -31,10 +31,9 @@ export const findPaletaByIdController = (req, res) => {
 };
 
 export const createPaletaController = (req, res) => {
-  const params = req.params
-  const token = params.token
-  console.log(token);
-  if (seguranca[0] == true && token == seguranca[1]){
+  const params = req.params;
+  const token = params.token;
+  if (seguranca[0] == true && token == seguranca[1]) {
     const paleta = req.body;
     if (
       !paleta ||
@@ -58,10 +57,9 @@ export const createPaletaController = (req, res) => {
 };
 
 export const updatePaletaController = async (req, res) => {
-  const params = req.params
-  const token = params.token
-  console.log(token);
-  if (seguranca[0] == true && token == seguranca[1]){
+  const params = req.params;
+  const token = params.token;
+  if (seguranca[0] == true && token == seguranca[1]) {
     const idParam = Number(params.id);
     const paletaEdit = req.body;
     const allPaletas = findPaletasService();
@@ -91,12 +89,10 @@ export const updatePaletaController = async (req, res) => {
 };
 
 export const deletePaletaController = (req, res) => {
-  const params = req.params
-  const token = params.token
-  console.log(token)
+  const params = req.params;
+  const token = params.token;
   if (seguranca[0] == true && token == seguranca[1]) {
     const idParam = Number(params.id);
-    console.log(idParam)
     if (!idParam) {
       return res.status(404).send({ mensagem: 'Paleta não encontrada!' });
     }
@@ -147,7 +143,6 @@ export const senhaPaletaController = (req, res) => {
 
 export const segurancaPaletaController = (req, res) => {
   const resposta = req.params.token;
-  console.log(resposta);
   const statusSeguranca = segurancaPaletaService(
     seguranca[1],
     resposta,
