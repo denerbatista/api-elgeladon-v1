@@ -130,16 +130,20 @@ export const deletePaletaService = (id) => {
 
 export const senhaPaletaService = (resposta) => {
   const senha = 'admin123';
-  const verificador = resposta == senha;
+  const verificador = resposta == senha 
   return verificador;
 };
 
-export const segurancaPaletaService=(seguranca)=>{
-  if(seguranca==true){
-    const cadeado = true
-    return cadeado
-  }else{
-    const cadeado = false
-    return cadeado
+export const segurancaPaletaService=(token,resposta,seguranca)=>{
+  if(seguranca==true && token==resposta){
+    return token
+  }else if(seguranca==true && token!=resposta){
+    return 0
+    }else if(seguranca==false && token!=resposta){
+    return Math.random()*1000+1;
+  }else if(seguranca==false && token==resposta){
+    return token
   }
-}
+  
+} 
+

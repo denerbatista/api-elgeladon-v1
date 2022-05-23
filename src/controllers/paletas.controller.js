@@ -5,10 +5,11 @@ import {
   updatePaletaService,
   deletePaletaService,
   senhaPaletaService,
-  segurancaPaletaService
+  segurancaPaletaService,
 } from '../services/paletas.service.js';
+import { json } from 'express';
 
-export let seguranca = false;
+let seguranca = [false, ''];
 
 export const findPaletasController = (req, res) => {
   const allPaletas = findPaletasService();
@@ -31,31 +32,31 @@ export const findPaletaByIdController = (req, res) => {
 };
 
 export const createPaletaController = (req, res) => {
-  if (seguranca == true) {
-  const paleta = req.body;
-  if (
-    !paleta ||
-    !paleta.sabor ||
-    !paleta.descricao ||
-    !paleta.foto ||
-    !paleta.preco
-  ) {
-    return res.status(400).send({
-      mensagem:
-        'Você não preencheu todos os dados para adicionar uma nova paleta ao cardápio!',
-    });
-  }
-  const newPaleta = createPaletaService(paleta);
-  res.status(201).send(newPaleta);
-}else{
-  return res
+  if (seguranca[0] == true) {
+    const paleta = req.body;
+    if (
+      !paleta ||
+      !paleta.sabor ||
+      !paleta.descricao ||
+      !paleta.foto ||
+      !paleta.preco
+    ) {
+      return res.status(400).send({
+        mensagem:
+          'Você não preencheu todos os dados para adicionar uma nova paleta ao cardápio!',
+      });
+    }
+    const newPaleta = createPaletaService(paleta);
+    res.status(201).send(newPaleta);
+  } else {
+    return res
       .status(404)
       .send({ mensagem: 'Acesso bloqueado, insira senha de administrador' });
-}
+  }
 };
 
 export const updatePaletaController = async (req, res) => {
-  if (seguranca == true) {
+  if (seguranca[0] == true) {
     const idParam = Number(req.params.id);
     const paletaEdit = req.body;
     const allPaletas = findPaletasService();
@@ -85,7 +86,7 @@ export const updatePaletaController = async (req, res) => {
 };
 
 export const deletePaletaController = (req, res) => {
-  if (seguranca == true) {
+  if (seguranca[0] == true) {
     const idParam = Number(req.params.id);
     if (!idParam) {
       return res.status(404).send({ mensagem: 'Paleta não encontrada!' });
@@ -100,26 +101,65 @@ export const deletePaletaController = (req, res) => {
 };
 
 export const senhaPaletaController = (req, res) => {
-  if (seguranca == false) {
-    const senhaParams = req.params.senha;
-    const resultado = senhaPaletaService(senhaParams);
-    if (resultado == true) {
-      res.send({ mensagem: 'Acesso liberado !' });
-      return (seguranca = true);
+  if (seguranca[0] == false) {
+    const senhaParams = req.params;
+    const senha = senhaParams.senha;
+    const token = senhaParams.token;
+    seguranca[0] = senhaPaletaService(senha);
+    if (seguranca[0] == true) {
+      seguranca[1] = token;
+      setTimeout(() => {
+        seguranca = false;
+        console.log('senha expirada');
+        seguranca[1] = '';
+      }, 1800000);
+      return res.send({
+        mensagem: `Acesso Liberado`,
+        token: `${Number(seguranca[1])}`,
+      });
     } else {
-      res.status(400).send({ mensagem: 'Senha invalida !' });
+      res.status(400).send({ mensagem: 'Senha inválida !' });
     }
   } else {
-    res.send({ mensagem: 'Acesso bloqueado com sucesso !' });
-    return (seguranca = false);
+    const senhaParams = req.params;
+    const token = senhaParams.token;
+    if (seguranca[1] == token) {
+      seguranca[0] = false;
+      seguranca[1] = '';
+      return res.send({
+        mensagem: 'Acesso bloqueado com sucesso !',
+        token: '',
+      });
+    } else if (seguranca[1] != token || !token) {
+      res.send({ mensagem: 'Administrador já logado em outro local !' });
+    }
   }
 };
 
-export const segurancaPaletaController=(req,res)=>{
-  const statusSeguranca = segurancaPaletaService(seguranca)
-  if(statusSeguranca==true){
-    return res.send({ mensagem: 'Aberto' }); 
-  }else{
-    return res.send({ mensagem: 'Fechado' });
+export const segurancaPaletaController = (req, res) => {
+  const resposta = req.params.token;
+  console.log(resposta);
+  const statusSeguranca = segurancaPaletaService(
+    seguranca[1],
+    resposta,
+    seguranca[0],
+  );
+  if (statusSeguranca == resposta) {
+    return res.send({
+      mensagem: 'Você já está logado digite a senha para sair.',
+      token: `${Number(statusSeguranca)}`,
+    });
+  } else {
+    if (statusSeguranca == 0) {
+      return res.send({
+        mensagem: 'Não tente da uma de esperto estou preparado pra isso ;)',
+        token: `${Number(statusSeguranca)}`,
+      });
+    } else {
+      return res.send({
+        mensagem: 'Você ainda não esta logado digite a senha pra entrar.',
+        token: `${Number(statusSeguranca)}`,
+      });
+    }
   }
-}
+};

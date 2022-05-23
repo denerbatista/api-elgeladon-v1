@@ -16,5 +16,5 @@ router.get('/find-paleta/:id', findPaletaByIdController);
 router.post('/create', createPaletaController);
 router.put('/update/:id', updatePaletaController);
 router.delete('/delete/:id', deletePaletaController);
-router.get('/seguranca/:senha', senhaPaletaController);
-router.get('/seguranca', segurancaPaletaController)
+router.get('/seguranca/:senha,:token', senhaPaletaController);
+router.get('/segurancaverific/:token', segurancaPaletaController)
